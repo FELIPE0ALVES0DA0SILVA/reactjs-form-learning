@@ -1,0 +1,92 @@
+.container{
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  background: #d8d8d8;
+  padding: 30px;
+  border-radius: 15px;
+}
+
+.container .header{
+  display: flex;
+  flex-direction: column;
+  margin: none;
+  padding-bottom: 15px;
+  font-size: 2em;
+}
+
+.container .header .text{
+  color: #9d0000;
+  font-weight: 600;
+}
+
+.container .header .underline{
+  width: 14em;
+  height: 6px;
+  background: #9d0000;
+  border-radius: 9px;
+}
+
+.container-data {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centraliza os elementos horizontalmente */
+  align-items: center; /* Centraliza os elementos verticalmente */
+}
+
+
+
+.container .inputs {
+  margin-right: 10px;
+  display: flex;
+  padding-top: 20px;
+}
+
+.container .inputs .titulo{
+  margin-right: 10px;
+  width: 100px;
+  display: inline-block;
+}
+
+.container .submit-container{
+  padding-top:50px ;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container .submit{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 220px;
+  height: 59px;
+  color: #d8d8d8;
+  background-color: #9d0000;
+  border-radius: 19px;
+  font-size: 19px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.container .inputs .input{
+  display: flex;
+}
+.select-projeto{
+  width: 200px;
+}
+
+.observacao{
+  display: flex;
+  flex-direction: column;
+  padding-top:20px;
+}
+.observacao .label{
+  padding-bottom: 15px;
+}
+
+.observacao input{
+  width: 400px;
+  height: 100px;
+}
+
