@@ -90,3 +90,15 @@
   height: 100px;
 }
 
+.input-text {
+  border: 2px solid #ccc; /* Cor da borda */
+  border-radius: 10px; /* Borda arredondada */
+  padding: 10px; /* Espaçamento interno */
+  font-size: 16px; /* Tamanho da fonte */
+}
+
+/* Estilo para quando o campo está em foco */
+.input-text:focus {
+  border-color: #007bff; /* Cor da borda quando em foco */
+  outline: none; /* Remove o contorno padrão do navegador */
+}

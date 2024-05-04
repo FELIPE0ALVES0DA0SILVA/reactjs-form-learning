@@ -19,7 +19,7 @@ function Apontamento() {
   const [results, setResults] = useState([]);
   const [ funcionarios, setFuncionarios] = useState([])
 
-  const getAllData = async () => {
+  const getProjetosData = async () => {
     const result = await axios.get("https://script.google.com/macros/s/AKfycbw20pQYFai5uFOREubFAqv9pBTyHnWDWtupRUbxldo83f0TbQWSOfDIz8aeY5KXg17JPQ/exec")
     
     console.log(result)
@@ -70,7 +70,7 @@ function Apontamento() {
 
   useEffect(() => {
     const fetchData = async () => {
-        await getAllData();
+        await getProjetosData();
         await getFuncionariosdata();
         // Agora ambas as funções foram concluídas, você pode prosseguir com operações adicionais se necessário
     };
