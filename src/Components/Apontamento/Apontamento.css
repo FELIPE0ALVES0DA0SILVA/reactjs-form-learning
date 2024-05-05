@@ -73,7 +73,7 @@
   display: flex;
 }
 .select-projeto{
-  width: 200px;
+  width: 400px;
 }
 
 .observacao{
@@ -101,4 +101,13 @@
 .input-text:focus {
   border-color: #007bff; /* Cor da borda quando em foco */
   outline: none; /* Remove o contorno padrão do navegador */
+}
+
+.input-text-large {
+  border: 2px solid #ccc; /* Cor da borda */
+  border-radius: 10px; /* Borda arredondada */
+  padding: 10px; /* Espaçamento interno */
+  font-size: 16px; /* Tamanho da fonte */
+  width: 100px;
+  height: 100px;
 }

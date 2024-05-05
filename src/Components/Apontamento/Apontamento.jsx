@@ -9,9 +9,14 @@ import axios from "axios";
 function Apontamento() {
 
   const [selectedColaborador, setSelectedColaborador] = useState(null);
+  const [selectedCodColaborador, setSelectedCodColaborador] = useState('');
   const [selectedProjeto, setSelectedProjeto] = useState(null)
+  const [selectedCodProjeto, setSelectedCodProjeto] = useState('')
+  const [selectedEtapa, setSelectedEtapa] = useState(null)
   const [selectedServico, setSelectedServico] = useState(null);
+  const [selectedCodServico, setSelectedCodServico] = useState('');
   const [selectedAtividade, setSelectedAtividade] = useState(null);
+  const [selectedCodAtividade, setSelectedCodAtividade] = useState('');
   const [selectedTipo, setSelectedTipo] = useState(null);
   const [selectedObservacao, setSelectedObservacao] = useState('');
 
@@ -23,7 +28,7 @@ function Apontamento() {
     const result = await axios.get("https://script.google.com/macros/s/AKfycbw20pQYFai5uFOREubFAqv9pBTyHnWDWtupRUbxldo83f0TbQWSOfDIz8aeY5KXg17JPQ/exec")
     
     console.log(result)
-    const jsonData = parseData(result.data);
+    const jsonData = result.data;
     console.log(jsonData); // Agora você tem os dados em formato JSON que pode ser facilmente manipulado
     
     setResults(jsonData)
@@ -82,21 +87,61 @@ function Apontamento() {
 
   const handleChangeColaborador = (selectedColaborador) => {
     setSelectedColaborador(selectedColaborador);
-    //setSelectedProjeto(null); // Reiniciar seleções
-    //setSelectedServico(null);
-    //setSelectedAtividade(null);
+    if (selectedColaborador !== null) {
+      funcionarios.find(item => 
+        {
+          if (item.CONCATENAR === selectedColaborador.value) {
+            setSelectedCodColaborador(item.CodFunc)
+          }
+        }
+      );
+    }
   };
 
   const handleChangeProjeto = (selectedProjeto) => {
     setSelectedProjeto(selectedProjeto)
+    if (selectedProjeto !== null) {
+      results.find(item => 
+        {
+          if (item.PROJETO === selectedProjeto.value) {
+            setSelectedCodProjeto(item.COD_PROJETO)
+          }
+        }
+      );
+    }
+  }
+  const handleChangeEtapa = (selectedEtapa) => {
+    setSelectedEtapa(selectedEtapa)
   }
 
   const handleChangeServico = (selectedServico) => {
     setSelectedServico(selectedServico);
+    if (selectedServico !== null) {
+      results.find(item => 
+        {
+          
+          if (item.DESCRICAO_SERVICO === selectedServico.value) {
+            setSelectedCodServico(item.COD_SERVICO)
+          }
+        }
+      );
+    }
   };
 
   const handleChangeAtividade = (selectedAtividade) => {
     setSelectedAtividade(selectedAtividade);
+    if (selectedAtividade !== null) {
+      results.find(item =>
+        
+        {
+          console.log(item.DESCRICAO_ATV)
+          console.log(selectedAtividade.value)
+          if (item.DESCRICAO_ATV === selectedAtividade.value) {
+            setSelectedCodAtividade(item.COD_ATV)
+          }
+        }
+      );
+    }
   };
   const handleChangeTipo = (selectedTipo) => {
     setSelectedTipo(selectedTipo);
@@ -109,38 +154,25 @@ function Apontamento() {
 
   function Submit() {
     const form = new FormData(); // Criar um novo objeto FormData
-    /*
     // Encontrar o objeto correspondente com base nos valores selecionados
     const selectedData = results.find(item => 
-      item.PROJETO === selectedProjeto.value &&
-      item.COD_SERVIÇO === selectedServico.value &&
-      item.COD_ATV === selectedAtividade.value
+      {
+        if (
+        item.PROJETO === selectedProjeto.value &&
+        item.COD_SERVICO === selectedCodServico &&
+        item.COD_ATV === selectedCodAtividade
+        ) {
+          form.append('id', item.ID)
+        }
+
+      }
     );
-
-    console.log(selectedData.id)
-
-    // Verificar se foi encontrado um objeto correspondente
-    if (selectedData) {
-      // Se encontrado, obter o ID desse objeto
-      const ID = selectedData.ID;
-
-      // Adicionar o ID ao FormData
-      form.append('id', ID);
-    } else {
-      // Adicionar o ID ao FormData
-      form.append('id', '');
-    }
-
-    */
-    // Adicionar os valores dos estados ao objeto FormData
     
-    
-    form.append('projeto', selectedProjeto.value);
-    form.append('servico', selectedServico.value);
-    form.append('atividade', selectedAtividade.value);
-    form.append('colaborador', selectedColaborador.value);
+    form.append('projeto', selectedCodProjeto);
+    form.append('servico', selectedCodServico);
+    form.append('atividade', selectedCodAtividade);
+    form.append('colaborador', selectedCodColaborador);
     form.append('tipo', selectedTipo.value);
-    console.log(selectedObservacao)
     form.append('observacao', selectedObservacao);
 
     // Adicionar a data e a hora atuais ao FormData
@@ -151,25 +183,36 @@ function Apontamento() {
 
     const currentdateTime = currentDate + " " + currentTime
     form.append('data', currentdateTime);
-
-    for (const [key, value] of form) {
-      console.log(`${key}: ${value}`);
-    }
+    form.append('dia', currentDate);
     
 
-    fetch('https://script.google.com/macros/s/AKfycbyuxZDM5p0o1pX_r2YPBOhysSbE9bZmT7XHKrryqh1uqpIHMnT3hspHVIljYELR4W_TUw/exec', {
+    fetch('https://script.google.com/macros/s/AKfycbyuxZDM5p0o1pX_r2YPBOhysSbE9bZmT7XHKrryqh1uqpIHMnT3hspHVIljYELR4W_TUw/exec?type=apontamento', {
       method: 'POST',
       body: form
     })
     
     // Limpar os estados
     setSelectedProjeto('');
+    setSelectedCodProjeto('');
+    setSelectedEtapa('');
     setSelectedServico('');
+    setSelectedCodServico('');
     setSelectedAtividade('');
+    setSelectedCodAtividade('');
     setSelectedColaborador('');
+    setSelectedCodColaborador('');
     setSelectedTipo('');
     setSelectedObservacao('');
   }
+
+  const customStyles = {
+    menuPortal: base => ({
+      ...base,
+      zIndex: 9999,
+      width: '600px', // Ajuste a largura conforme necessário
+      left: 'calc(20%)'
+    }),
+  };
 
   return (
     <div className="container">
@@ -200,9 +243,31 @@ function Apontamento() {
                 .map(item => ({
                 label: item.PROJETO,
                 value: item.PROJETO
-            }))}
+              }))}
               value={selectedProjeto}
               onChange={handleChangeProjeto}
+              styles={customStyles}
+              menuPortalTarget={document.body}
+              className="select-projeto"
+            />
+          </div>
+        </div>
+        <div className="inputs">
+          <div className="input">
+            <span className="titulo">Etapa:</span>
+            
+            <Select 
+              options={selectedProjeto ? results
+                .filter(item => item.PROJETO === selectedProjeto.value)
+                .filter((item, index, self) => self.findIndex(t => t.ETAPA_SERVICO === item.ETAPA_SERVICO) === index)
+                .map(item => ({
+                label: item.ETAPA_SERVICO,
+                value: item.ETAPA_SERVICO
+              })):[]}
+              value={selectedEtapa}
+              onChange={handleChangeEtapa}
+              styles={customStyles}
+              menuPortalTarget={document.body}
               className="select-projeto"
             />
           </div>
@@ -212,15 +277,17 @@ function Apontamento() {
             <img src="" alt="" />
             <span className="titulo">Serviço:</span>
             <Select 
-              options={selectedProjeto ? results
-                .filter(item => item.PROJETO === selectedProjeto.value)
-                .filter((item, index, self) => self.findIndex(t => t.DESCRIÇÃO_SERVIÇO === item.DESCRIÇÃO_SERVIÇO) === index)
+              options={selectedEtapa ? results
+                .filter(item => item.ETAPA_SERVICO === selectedEtapa.value)
+                .filter((item, index, self) => self.findIndex(t => t.DESCRICAO_SERVICO === item.DESCRICAO_SERVICO) === index)
                 .map(item => ({
-                label: item.DESCRIÇÃO_SERVIÇO,
-                value: item.DESCRIÇÃO_SERVIÇO
-            })):[]}
+                label: item.DESCRICAO_SERVICO,
+                value: item.DESCRICAO_SERVICO
+              })):[]}
               value={selectedServico}
               onChange={handleChangeServico}
+              styles={customStyles}
+              menuPortalTarget={document.body}
               className="select-projeto"
             />
           </div>
@@ -231,14 +298,16 @@ function Apontamento() {
             <span className="titulo">Atividade:</span>
             <Select 
               options={selectedServico ? results
-                .filter(item => item.DESCRIÇÃO_SERVIÇO === selectedServico.value)
-                .filter((item, index, self) => self.findIndex(t => t.DESCRIÇÃO_ATV === item.DESCRIÇÃO_ATV) === index)
+                .filter(item => item.DESCRICAO_SERVICO === selectedServico.value)
+                .filter((item, index, self) => self.findIndex(t => t.DESCRICAO_ATV === item.DESCRICAO_ATV) === index)
                 .map(item => ({
-                label: item.DESCRIÇÃO_ATV,
-                value: item.DESCRIÇÃO_ATV
-            })):[]}
+                label: item.DESCRICAO_ATV,
+                value: item.DESCRICAO_ATV
+              })):[]}
               value={selectedAtividade}
               onChange={handleChangeAtividade}
+              styles={customStyles}
+              menuPortalTarget={document.body}
               className="select-projeto"
             />
           </div>
@@ -252,9 +321,11 @@ function Apontamento() {
               options={tipo.map(item => ({
                 label: item.tipos,
                 value: item.tipos
-            }))}
+              }))}
               value={selectedTipo}
               onChange={handleChangeTipo}
+              styles={customStyles}
+              menuPortalTarget={document.body}
               className="select-projeto"
             />
           </div>
@@ -265,6 +336,8 @@ function Apontamento() {
             <input
                 value={selectedObservacao}
                 onChange={handleChangeObservacao}
+                className='input-text-large' type="text" 
+                
             />
         </div>
       </div>
