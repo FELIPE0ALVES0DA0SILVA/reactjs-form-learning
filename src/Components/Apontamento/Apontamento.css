@@ -47,6 +47,11 @@
   width: 100px;
   display: inline-block;
 }
+.titulo-small{
+  margin-bottom: 10px;
+  width: 100px;
+  display: inline-block;
+}
 
 .container .submit-container{
   padding-top:50px ;
@@ -72,8 +77,16 @@
 .container .inputs .input{
   display: flex;
 }
+.container .small .inputs .input{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .select-projeto{
   width: 400px;
+}
+.select-projeto-small{
+  width: 200px;
 }
 
 .observacao{
@@ -110,4 +123,14 @@
   font-size: 16px; /* Tamanho da fonte */
   width: 100px;
   height: 100px;
+}
+
+.small {
+  display: flex;
+  justify-content: space-between;
+}
+
+.inputSmall {
+  display: flex;
+  flex-direction: column;
 }

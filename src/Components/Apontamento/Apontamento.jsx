@@ -4,6 +4,7 @@ import Select from 'react-select'
 
 
 import tipo from './MOCK_DATA.json';
+import motivo from './MOTIVO.json';
 import axios from "axios";
 
 function Apontamento() {
@@ -13,8 +14,8 @@ function Apontamento() {
   const [selectedProjeto, setSelectedProjeto] = useState(null)
   const [selectedCodProjeto, setSelectedCodProjeto] = useState('')
   const [selectedEtapa, setSelectedEtapa] = useState(null)
-  const [selectedServico, setSelectedServico] = useState(null);
-  const [selectedCodServico, setSelectedCodServico] = useState('');
+  const [selectedFinalizado, setSelectedFinalizado] = useState(null);
+  const [selectedMotivo, setSelectedMotivo] = useState(null);
   const [selectedAtividade, setSelectedAtividade] = useState(null);
   const [selectedCodAtividade, setSelectedCodAtividade] = useState('');
   const [selectedTipo, setSelectedTipo] = useState(null);
@@ -24,8 +25,8 @@ function Apontamento() {
   const [results, setResults] = useState([]);
   const [ funcionarios, setFuncionarios] = useState([])
 
-  const getProjetosData = async () => {
-    const result = await axios.get("https://script.google.com/macros/s/AKfycbw20pQYFai5uFOREubFAqv9pBTyHnWDWtupRUbxldo83f0TbQWSOfDIz8aeY5KXg17JPQ/exec")
+  const getAtividadesData = async () => {
+    const result = await axios.get("https://script.google.com/macros/s/AKfycbw20pQYFai5uFOREubFAqv9pBTyHnWDWtupRUbxldo83f0TbQWSOfDIz8aeY5KXg17JPQ/exec?type=atividades")
     
     console.log(result)
     const jsonData = result.data;
@@ -75,7 +76,7 @@ function Apontamento() {
 
   useEffect(() => {
     const fetchData = async () => {
-        await getProjetosData();
+        await getAtividadesData();
         await getFuncionariosdata();
         // Agora ambas as funções foram concluídas, você pode prosseguir com operações adicionais se necessário
     };
@@ -103,7 +104,7 @@ function Apontamento() {
     if (selectedProjeto !== null) {
       results.find(item => 
         {
-          if (item.PROJETO === selectedProjeto.value) {
+          if (item.PROJETOS === selectedProjeto.value) {
             setSelectedCodProjeto(item.COD_PROJETO)
           }
         }
@@ -114,18 +115,12 @@ function Apontamento() {
     setSelectedEtapa(selectedEtapa)
   }
 
-  const handleChangeServico = (selectedServico) => {
-    setSelectedServico(selectedServico);
-    if (selectedServico !== null) {
-      results.find(item => 
-        {
-          
-          if (item.DESCRICAO_SERVICO === selectedServico.value) {
-            setSelectedCodServico(item.COD_SERVICO)
-          }
-        }
-      );
-    }
+  const handleChangeFinalizado = (selectedFinalizado) => {
+    setSelectedFinalizado(selectedFinalizado);
+  };
+
+  const handleChangeMotivo = (selectedMotivo) => {
+    setSelectedMotivo(selectedMotivo);
   };
 
   const handleChangeAtividade = (selectedAtividade) => {
@@ -134,9 +129,7 @@ function Apontamento() {
       results.find(item =>
         
         {
-          console.log(item.DESCRICAO_ATV)
-          console.log(selectedAtividade.value)
-          if (item.DESCRICAO_ATV === selectedAtividade.value) {
+          if (item.ATIVIDADES === selectedAtividade.value) {
             setSelectedCodAtividade(item.COD_ATV)
           }
         }
@@ -155,11 +148,13 @@ function Apontamento() {
   function Submit() {
     const form = new FormData(); // Criar um novo objeto FormData
     // Encontrar o objeto correspondente com base nos valores selecionados
+
+    /*
     const selectedData = results.find(item => 
       {
         if (
         item.PROJETO === selectedProjeto.value &&
-        item.COD_SERVICO === selectedCodServico &&
+        item.COD_Finalizado === selectedFinalizado &&
         item.COD_ATV === selectedCodAtividade
         ) {
           form.append('id', item.ID)
@@ -167,10 +162,14 @@ function Apontamento() {
 
       }
     );
+    */
+    
     
     form.append('projeto', selectedCodProjeto);
-    form.append('servico', selectedCodServico);
+    form.append('finalizado', selectedFinalizado.value);
+    form.append('motivo', selectedMotivo.value);
     form.append('atividade', selectedCodAtividade);
+    form.append('etapa', selectedEtapa.value);
     form.append('colaborador', selectedCodColaborador);
     form.append('tipo', selectedTipo.value);
     form.append('observacao', selectedObservacao);
@@ -195,8 +194,8 @@ function Apontamento() {
     setSelectedProjeto('');
     setSelectedCodProjeto('');
     setSelectedEtapa('');
-    setSelectedServico('');
-    setSelectedCodServico('');
+    setSelectedFinalizado('');
+    setSelectedMotivo('');
     setSelectedAtividade('');
     setSelectedCodAtividade('');
     setSelectedColaborador('');
@@ -213,6 +212,30 @@ function Apontamento() {
       left: 'calc(20%)'
     }),
   };
+  
+  const customStylesSmall = {
+    menuPortal: base => ({
+      ...base,
+      zIndex: 9999,
+      width: '300px', // Ajuste a largura conforme necessário
+      left: 'calc(20%)'
+    }),
+  };
+  const customStylesSmallRight = {
+    menuPortal: base => ({
+      ...base,
+      zIndex: 9999,
+      width: '300px', // Ajuste a largura conforme necessário
+      left: 'calc(50%)'
+    }),
+  };
+
+  const optionsFinalizado = [
+    { value: 'SIM', label: 'SIM' },
+    { value: 'NÂO', label: 'NÂO' },
+    
+  ];
+
 
   return (
     <div className="container">
@@ -239,10 +262,10 @@ function Apontamento() {
             <span className="titulo">Projeto:</span>
             <Select 
               options={results
-                .filter((item, index, self) => self.findIndex(t => t.PROJETO === item.PROJETO) === index)
+                .filter((item, index, self) => self.findIndex(t => t.PROJETOS === item.PROJETOS) === index)
                 .map(item => ({
-                label: item.PROJETO,
-                value: item.PROJETO
+                label: item.PROJETOS,
+                value: item.PROJETOS
               }))}
               value={selectedProjeto}
               onChange={handleChangeProjeto}
@@ -258,11 +281,11 @@ function Apontamento() {
             
             <Select 
               options={selectedProjeto ? results
-                .filter(item => item.PROJETO === selectedProjeto.value)
-                .filter((item, index, self) => self.findIndex(t => t.ETAPA_SERVICO === item.ETAPA_SERVICO) === index)
+                .filter(item => item.PROJETOS === selectedProjeto.value)
+                .filter((item, index, self) => self.findIndex(t => t.ETAPA === item.ETAPA) === index)
                 .map(item => ({
-                label: item.ETAPA_SERVICO,
-                value: item.ETAPA_SERVICO
+                label: item.ETAPA,
+                value: item.ETAPA
               })):[]}
               value={selectedEtapa}
               onChange={handleChangeEtapa}
@@ -272,37 +295,17 @@ function Apontamento() {
             />
           </div>
         </div>
+        
         <div className="inputs">
           <div className="input">
-            <img src="" alt="" />
-            <span className="titulo">Serviço:</span>
-            <Select 
-              options={selectedEtapa ? results
-                .filter(item => item.ETAPA_SERVICO === selectedEtapa.value)
-                .filter((item, index, self) => self.findIndex(t => t.DESCRICAO_SERVICO === item.DESCRICAO_SERVICO) === index)
-                .map(item => ({
-                label: item.DESCRICAO_SERVICO,
-                value: item.DESCRICAO_SERVICO
-              })):[]}
-              value={selectedServico}
-              onChange={handleChangeServico}
-              styles={customStyles}
-              menuPortalTarget={document.body}
-              className="select-projeto"
-            />
-          </div>
-        </div>
-        <div className="inputs">
-          <div className="input">
-            <img src="" alt="" />
             <span className="titulo">Atividade:</span>
             <Select 
-              options={selectedServico ? results
-                .filter(item => item.DESCRICAO_SERVICO === selectedServico.value)
-                .filter((item, index, self) => self.findIndex(t => t.DESCRICAO_ATV === item.DESCRICAO_ATV) === index)
+              options={selectedEtapa ? results
+                .filter(item => item.PROJETOS === selectedProjeto.value && item.ETAPA === selectedEtapa.value)
+                .filter((item, index, self) => self.findIndex(t => t.ATIVIDADES === item.ATIVIDADES) === index)
                 .map(item => ({
-                label: item.DESCRICAO_ATV,
-                value: item.DESCRICAO_ATV
+                label: item.ATIVIDADES,
+                value: item.ATIVIDADES
               })):[]}
               value={selectedAtividade}
               onChange={handleChangeAtividade}
@@ -312,22 +315,53 @@ function Apontamento() {
             />
           </div>
         </div>
+        <div className="small">
+          <div className="inputs">
+            <div className="input">
+              <span className="titulo-small">Tipo</span>
+              <Select 
+                options={tipo.map(item => ({
+                  label: item.tipos,
+                  value: item.tipos
+                }))}
+                value={selectedTipo}
+                onChange={handleChangeTipo}
+                styles={customStylesSmall}
+                menuPortalTarget={document.body}
+                className="select-projeto-small"
+              />
+            </div>
+          </div>
 
-        <div className="inputs">
-          <div className="input">
-            <img src="" alt="" />
-            <span className="titulo">Tipo:</span>
-            <Select 
-              options={tipo.map(item => ({
-                label: item.tipos,
-                value: item.tipos
-              }))}
-              value={selectedTipo}
-              onChange={handleChangeTipo}
-              styles={customStyles}
-              menuPortalTarget={document.body}
-              className="select-projeto"
-            />
+          <div className="inputs">
+            <div className="input">
+              <span className="titulo-small">Finalizado</span>
+              <Select 
+                options={optionsFinalizado}
+                value={selectedFinalizado}
+                onChange={handleChangeFinalizado}
+                styles={customStylesSmallRight}
+                menuPortalTarget={document.body}
+                className="select-projeto-small"
+              />
+            </div>
+          </div>
+
+          <div className="inputs">
+            <div className="input">
+              <span className="titulo-small">Motivo</span>
+              <Select 
+                options={motivo.map(item => ({
+                  label: item.MOTIVO,
+                  value: item.MOTIVO
+                }))}
+                value={selectedMotivo}
+                onChange={handleChangeMotivo}
+                styles={customStylesSmallRight}
+                menuPortalTarget={document.body}
+                className="select-projeto-small"
+              />
+            </div>
           </div>
         </div>
 
