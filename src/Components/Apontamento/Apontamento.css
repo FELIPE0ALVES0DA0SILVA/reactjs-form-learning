@@ -134,3 +134,27 @@
   display: flex;
   flex-direction: column;
 }
+
+.select-projeto-small-time {
+  width: 200px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* Estilo para o ponteiro do mouse */
+.select-projeto-small-time:hover {
+  border-color: #aaa;
+}
+
+/* Estilo para o foco do input */
+.select-projeto-small-time:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}

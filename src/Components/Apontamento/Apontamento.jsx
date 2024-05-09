@@ -1,7 +1,7 @@
 import React, {useState,useEffect} from "react";
 import './Apontamento.css'
 import Select from 'react-select'
-
+import DateTimePicker from "react-datetime-picker";
 
 import tipo from './MOCK_DATA.json';
 import motivo from './MOTIVO.json';
@@ -15,6 +15,7 @@ function Apontamento() {
   const [selectedCodProjeto, setSelectedCodProjeto] = useState('')
   const [selectedEtapa, setSelectedEtapa] = useState(null)
   const [selectedFinalizado, setSelectedFinalizado] = useState(null);
+  const [selectedDateTime, setSelectedDateTime] = useState('');
   const [selectedMotivo, setSelectedMotivo] = useState(null);
   const [selectedAtividade, setSelectedAtividade] = useState(null);
   const [selectedCodAtividade, setSelectedCodAtividade] = useState('');
@@ -119,6 +120,28 @@ function Apontamento() {
     setSelectedFinalizado(selectedFinalizado);
   };
 
+  const handleChangeDateTime = (selectedDateTime) => {
+
+    const getCurrentSeconds = () => {
+      const currentTime = new Date();
+      return currentTime.getSeconds().toString().padStart(2, '0');
+    }
+
+    const currentSeconds = getCurrentSeconds();
+    const formatToHHMMSS = (value) => {
+      const parts = value.split(':');
+      const hours = parts[0] ? parts[0].padStart(2, '0') : '00';
+      const minutes = parts[1] ? parts[1].padStart(2, '0') : '00';
+      const seconds = parts[2] ? parts[2].padStart(2, '0') : currentSeconds;
+      return `${hours}:${minutes}:${seconds}`;
+    };
+
+    
+    const inputValue = selectedDateTime.target.value;
+    const formattedTime = formatToHHMMSS(inputValue);
+    setSelectedDateTime(formattedTime);
+  };
+
   const handleChangeMotivo = (selectedMotivo) => {
     setSelectedMotivo(selectedMotivo);
   };
@@ -163,6 +186,20 @@ function Apontamento() {
       }
     );
     */
+    const currentTime = new Date().toLocaleTimeString();
+
+    const currentDate = new Date().toLocaleDateString();
+    form.append('dia', currentDate);
+
+    if (
+      selectedDateTime === ''
+      ) {
+        const currentdateTime = currentDate + " " + currentTime
+        form.append('data', currentdateTime);
+      } else {
+        const currentdateTime = currentDate + " " + selectedDateTime
+        form.append('data', currentdateTime);
+      }
     
     
     form.append('projeto', selectedCodProjeto);
@@ -176,13 +213,10 @@ function Apontamento() {
 
     // Adicionar a data e a hora atuais ao FormData
     
-    const currentTime = new Date().toLocaleTimeString();
 
-    const currentDate = new Date().toLocaleDateString();
 
-    const currentdateTime = currentDate + " " + currentTime
-    form.append('data', currentdateTime);
-    form.append('dia', currentDate);
+    
+   
     
 
     fetch('https://script.google.com/macros/s/AKfycbyuxZDM5p0o1pX_r2YPBOhysSbE9bZmT7XHKrryqh1uqpIHMnT3hspHVIljYELR4W_TUw/exec?type=apontamento', {
@@ -195,6 +229,7 @@ function Apontamento() {
     setSelectedCodProjeto('');
     setSelectedEtapa('');
     setSelectedFinalizado('');
+    setSelectedDateTime('');
     setSelectedMotivo('');
     setSelectedAtividade('');
     setSelectedCodAtividade('');
@@ -208,7 +243,7 @@ function Apontamento() {
     menuPortal: base => ({
       ...base,
       zIndex: 9999,
-      width: '600px', // Ajuste a largura conforme necessário
+      width: '400px', // Ajuste a largura conforme necessário
       left: 'calc(20%)'
     }),
   };
@@ -346,6 +381,22 @@ function Apontamento() {
               />
             </div>
           </div>
+        </div>
+
+
+
+        <div className="small">
+          <div className="inputs">
+            <div className="input">
+              <span className="titulo-small">Data e Hora</span>
+              <input
+                value={selectedDateTime}
+                onChange={handleChangeDateTime}
+                type="time"
+                className="select-projeto-small-time"
+              />
+            </div>
+          </div>
 
           <div className="inputs">
             <div className="input">
@@ -364,6 +415,8 @@ function Apontamento() {
             </div>
           </div>
         </div>
+
+
 
         <div className="observacao">
             <div className="label">Observações</div>
