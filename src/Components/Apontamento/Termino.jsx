@@ -4,11 +4,11 @@ import Select from 'react-select'
 
 import { Link } from 'react-router-dom';
 
-import tipo from './MOCK_DATA_SIM.json';
+import tipo from './MOCK_DATA_NAO.json';
 import motivo from './MOTIVO.json';
 import axios from "axios";
 
-function Apontamento() {
+function Termino() {
 
   const [selectedColaborador, setSelectedColaborador] = useState(null);
   const [selectedCodColaborador, setSelectedCodColaborador] = useState('');
@@ -24,36 +24,22 @@ function Apontamento() {
   const [selectedObservacao, setSelectedObservacao] = useState('');
 
 
-  const [results, setResults] = useState([]);
-  const [ funcionarios, setFuncionarios] = useState([])
+  const [resultsTermino, setResultsTermino] = useState([]);
 
-  const getAtividadesData = async () => {
-    const result = await axios.get("https://script.google.com/macros/s/AKfycbw20pQYFai5uFOREubFAqv9pBTyHnWDWtupRUbxldo83f0TbQWSOfDIz8aeY5KXg17JPQ/exec?type=atividades")
+
+  const getAtividadesTerminoData = async () => {
+    const result = await axios.get("https://script.google.com/macros/s/AKfycbyuxZDM5p0o1pX_r2YPBOhysSbE9bZmT7XHKrryqh1uqpIHMnT3hspHVIljYELR4W_TUw/exec?type=projetosreceber")
     
-    console.log(result)
     const jsonData = result.data;
-    console.log(jsonData); // Agora você tem os dados em formato JSON que pode ser facilmente manipulado
     
-    setResults(jsonData)
+    setResultsTermino(jsonData)
     
   }
 
-  const getFuncionariosdata = async () => {
-    const response = await axios.get("https://script.google.com/macros/s/AKfycbxQTUaFfnx2NsB8BWLlnR9WqPTEboYa8aYaPo8mRS2DPZy-2WjlBIP7-jPXxHIa06dW/exec")
-
-    console.log(response)
-    const jsonDataFuncionario = (response.data);
-    console.log(jsonDataFuncionario); // Agora você tem os dados em formato JSON que pode ser facilmente manipulado
-    
-    setFuncionarios(jsonDataFuncionario)
-
-  }
-  
 
   useEffect(() => {
     const fetchData = async () => {
-        await getAtividadesData();
-        await getFuncionariosdata();
+        await getAtividadesTerminoData();
     };
 
     fetchData();
@@ -64,10 +50,10 @@ function Apontamento() {
   const handleChangeColaborador = (selectedColaborador) => {
     setSelectedColaborador(selectedColaborador);
     if (selectedColaborador !== null) {
-      funcionarios.find(item => 
+      resultsTermino.find(item => 
         {
-          if (item.CONCATENAR === selectedColaborador.value) {
-            setSelectedCodColaborador(item.CodFunc)
+          if (item.COLABORADOR === selectedColaborador.value) {
+            setSelectedCodColaborador(item.COD_COLABORADOR)
           }
         }
       );
@@ -77,7 +63,7 @@ function Apontamento() {
   const handleChangeProjeto = (selectedProjeto) => {
     setSelectedProjeto(selectedProjeto)
     if (selectedProjeto !== null) {
-      results.find(item => 
+      resultsTermino.find(item => 
         {
           if (item.PROJETOS === selectedProjeto.value) {
             setSelectedCodProjeto(item.COD_PROJETO)
@@ -123,7 +109,7 @@ function Apontamento() {
   const handleChangeAtividade = (selectedAtividade) => {
     setSelectedAtividade(selectedAtividade);
     if (selectedAtividade !== null) {
-      results.find(item =>
+      resultsTermino.find(item =>
         
         {
           if (item.ATIVIDADES === selectedAtividade.value) {
@@ -143,23 +129,7 @@ function Apontamento() {
 
 
   function Submit() {
-    const form = new FormData(); // Criar um novo objeto FormData
-    // Encontrar o objeto correspondente com base nos valores selecionados
-
-    /*
-    const selectedData = results.find(item => 
-      {
-        if (
-        item.PROJETO === selectedProjeto.value &&
-        item.COD_Finalizado === selectedFinalizado &&
-        item.COD_ATV === selectedCodAtividade
-        ) {
-          form.append('id', item.ID)
-        }
-
-      }
-    );
-    */
+    const form = new FormData();
     const currentTime = new Date().toLocaleTimeString();
 
     const currentDate = new Date().toLocaleDateString();
@@ -212,6 +182,9 @@ function Apontamento() {
     setSelectedCodColaborador('');
     setSelectedTipo('');
     setSelectedObservacao('');
+
+    // Esperar um curto período antes de buscar os dados atualizados
+    setTimeout(getAtividadesTerminoData, 2500); // Aguarda 1 segundo (1000 milissegundos) antes de buscar os dados atualizados
   }
 
   const customStyles = {
@@ -256,17 +229,23 @@ function Apontamento() {
       </div>
       <div>Apontamento de Produção</div>
       <div className="header">
-        <div className="text">Início de Atividades</div>
+        <div className="text">Término de Atividades</div>
         <div className="underline"></div>
       </div>
       <div className="container-data">
         <div className="inputs">
             <span className="titulo">Colaborador:</span>
             <Select 
-              options={funcionarios.map(item => ({
-                label: item.CONCATENAR,
-                value: item.CONCATENAR
-            }))}
+              options={resultsTermino
+                .filter(item => item.TIPO === 'INÍCIO' && !item.PERIODO_TERMINO)
+                .reduce((unique, item) => {
+                  return unique.includes(item.COLABORADOR) ? unique : [...unique, item.COLABORADOR];
+                }, [])
+                .map(item => ({
+                  label: item,
+                  value: item
+                }))
+              }
               value={selectedColaborador}
               onChange={handleChangeColaborador}
               className="select-projeto"
@@ -276,12 +255,17 @@ function Apontamento() {
           <div className="input">
             <span className="titulo">Projeto:</span>
             <Select 
-              options={results
-                .filter((item, index, self) => self.findIndex(t => t.PROJETOS === item.PROJETOS) === index)
+              options={
+                resultsTermino
+                .filter(item => item.TIPO === 'INÍCIO' && !item.PERIODO_TERMINO && selectedColaborador && item.COLABORADOR === selectedColaborador.value)
+                .reduce((unique, item) => {
+                  return unique.includes(item.PROJETOS) ? unique : [...unique, item.PROJETOS];
+                }, [])
                 .map(item => ({
-                label: item.PROJETOS,
-                value: item.PROJETOS
-              }))}
+                  label: item,
+                  value: item
+                }))
+              }
               value={selectedProjeto}
               onChange={handleChangeProjeto}
               styles={customStyles}
@@ -295,13 +279,17 @@ function Apontamento() {
             <span className="titulo">Etapa:</span>
             
             <Select 
-              options={selectedProjeto ? results
-                .filter(item => item.PROJETOS === selectedProjeto.value)
-                .filter((item, index, self) => self.findIndex(t => t.ETAPA === item.ETAPA) === index)
+              options={
+                resultsTermino
+                .filter(item => item.TIPO === 'INÍCIO' && !item.PERIODO_TERMINO && selectedColaborador && item.COLABORADOR === selectedColaborador.value && selectedProjeto && item.PROJETOS === selectedProjeto.value)
+                .reduce((unique, item) => {
+                  return unique.includes(item.ETAPA) ? unique : [...unique, item.ETAPA];
+                }, [])
                 .map(item => ({
-                label: item.ETAPA,
-                value: item.ETAPA
-              })):[]}
+                  label: item,
+                  value: item
+                }))
+              }
               value={selectedEtapa}
               onChange={handleChangeEtapa}
               styles={customStyles}
@@ -315,13 +303,17 @@ function Apontamento() {
           <div className="input">
             <span className="titulo">Atividade:</span>
             <Select 
-              options={selectedEtapa ? results
-                .filter(item => item.PROJETOS === selectedProjeto.value && item.ETAPA === selectedEtapa.value)
-                .filter((item, index, self) => self.findIndex(t => t.ATIVIDADES === item.ATIVIDADES) === index)
+              options={
+                resultsTermino
+                .filter(item => item.TIPO === 'INÍCIO' && !item.PERIODO_TERMINO && selectedColaborador && item.COLABORADOR === selectedColaborador.value && selectedProjeto && item.PROJETOS === selectedProjeto.value && selectedEtapa && item.ETAPA === selectedEtapa.value)
+                .reduce((unique, item) => {
+                  return unique.includes(item.ATIVIDADES) ? unique : [...unique, item.ATIVIDADES];
+                }, [])
                 .map(item => ({
-                label: item.ATIVIDADES,
-                value: item.ATIVIDADES
-              })):[]}
+                  label: item,
+                  value: item
+                }))
+              }
               value={selectedAtividade}
               onChange={handleChangeAtividade}
               styles={customStyles}
@@ -418,4 +410,4 @@ function Apontamento() {
   )
 }
 
-export default Apontamento
+export default Termino

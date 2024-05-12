@@ -1,0 +1,89 @@
+.botao-inicio {
+  background-color: #9191916b; /* Cor de fundo azul */
+  color: #fff; /* Cor do texto branca */
+  border: none; /* Sem borda */
+  border-radius: 5px; /* Borda arredondada */
+  font-size: 16px; /* Tamanho da fonte */
+  cursor: pointer; /* Cursor ao passar o mouse */
+  margin: 0px 10px;
+  width: 100px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.botao-inicio:hover {
+  background-color: #919191e5; /* Cor de fundo azul mais escura ao passar o mouse */
+  color: #fff;
+}
+
+
+.botao-saidas {
+  background-color: #b30000d7; /* Cor de fundo azul */
+  color: #fff; /* Cor do texto branca */
+  border: none; /* Sem borda */
+  border-radius: 5px; /* Borda arredondada */
+  font-size: 16px; /* Tamanho da fonte */
+  cursor: pointer; /* Cursor ao passar o mouse */
+  margin: 0px 10px;
+  width: 100px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.botao-saidas:hover {
+  background-color: #b30000; /* Cor de fundo azul mais escura ao passar o mouse */
+  color: #fff; /* Cor do texto branca */
+}
+
+.botao-entradas {
+  background-color: #1eb300e0; /* Cor de fundo azul */
+  color: #fff; /* Cor do texto branca */
+  border: none; /* Sem borda */
+  border-radius: 5px; /* Borda arredondada */
+  font-size: 16px; /* Tamanho da fonte */
+  cursor: pointer; /* Cursor ao passar o mouse */
+  margin: 0px 10px;
+  width: 100px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.botao-entradas:hover {
+  background-color: #1eb300d8; /* Cor de fundo azul mais escura ao passar o mouse */
+  color: #fff; /* Cor do texto branca */
+}
+
+.botao {
+  display: flex;
+  justify-content: center;
+}
+.botao-tabela {
+  background-color: #007bff; /* Cor de fundo azul */
+  color: #fff; /* Cor do texto branca */
+  border: none; /* Sem borda */
+  border-radius: 5px; /* Borda arredondada */
+  font-size: 16px; /* Tamanho da fonte */
+  cursor: pointer; /* Cursor ao passar o mouse */
+  margin: 0px 10px;
+  width: 100px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.botao-tabela:hover {
+  background-color: #007bff9c; /* Cor de fundo azul mais escura ao passar o mouse */
+  color: #fff; /* Cor do texto branca */
+}
+
+.botao {
+  display: flex;
+  justify-content: center;
+}
