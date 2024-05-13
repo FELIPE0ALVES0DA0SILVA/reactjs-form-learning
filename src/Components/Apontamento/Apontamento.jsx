@@ -52,8 +52,9 @@ function Apontamento() {
 
   useEffect(() => {
     const fetchData = async () => {
-        await getAtividadesData();
         await getFuncionariosdata();
+        await getAtividadesData();
+        
     };
 
     fetchData();
