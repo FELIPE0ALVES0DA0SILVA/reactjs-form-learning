@@ -28,7 +28,7 @@ function Apontamento() {
   const [ funcionarios, setFuncionarios] = useState([])
 
   const getAtividadesData = async () => {
-    const result = await axios.get("https://script.google.com/macros/s/AKfycbw20pQYFai5uFOREubFAqv9pBTyHnWDWtupRUbxldo83f0TbQWSOfDIz8aeY5KXg17JPQ/exec?type=atividades")
+    const result = await axios.get("https://script.google.com/macros/s/AKfycbzGxZ_WFIdz47Q9kuggiTNHGmO0IzfBmwTMvKDzi9ZV3QhqzwhZZanT9MQwYwzVNCw/exec?type=atividades")
     
     console.log(result)
     const jsonData = result.data;
