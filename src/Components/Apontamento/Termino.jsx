@@ -31,7 +31,8 @@ function Termino() {
     const result = await axios.get("https://script.google.com/macros/s/AKfycbyuxZDM5p0o1pX_r2YPBOhysSbE9bZmT7XHKrryqh1uqpIHMnT3hspHVIljYELR4W_TUw/exec?type=projetosreceber")
     
     const jsonData = result.data;
-    
+
+    console.log(jsonData)
     setResultsTermino(jsonData)
     
   }
